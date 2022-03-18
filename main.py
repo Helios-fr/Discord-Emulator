@@ -23,14 +23,6 @@ def get_members(guild_id, channel_id):
 	bot.gateway.resetSession() #saves 10 seconds when gateway is run again
 	return bot.gateway.session.guild(guild_id).members
 
-#guild_id = '747124490101588068'
-
-guild_id = '951610440817995836'
-
-#channel_id = '747125833818308789'
-
-channel_id = '951610440817995839'
-
 def Scan_and_deposit(guild_id, channel_id):
   members = get_members(guild_id, channel_id) #yes, the channel_id input is required
 
@@ -65,7 +57,9 @@ def Scan_and_deposit(guild_id, channel_id):
   with open('data.json', 'w') as outfile:
       json.dump(userdata, outfile, indent = 4)
 
+################## Things for you to change if you want
 
+guild_id = input("Enter the id of the server: ")
+channel_id = input("Enter the id of a channel in the server: ")
 
-Scan_and_deposit('747124490101588068', '747125833818308789')
-Scan_and_deposit('951610440817995836', '951610440817995839')
+Scan_and_deposit(guild_id, channel_id)
