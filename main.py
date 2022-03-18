@@ -23,32 +23,49 @@ def get_members(guild_id, channel_id):
 	bot.gateway.resetSession() #saves 10 seconds when gateway is run again
 	return bot.gateway.session.guild(guild_id).members
 
-guild_id = '747124490101588068'
+#guild_id = '747124490101588068'
 
-#guild_id = '951610440817995836'
+guild_id = '951610440817995836'
 
-channel_id = '747125833818308789'
+#channel_id = '747125833818308789'
 
-#channel_id = '951610440817995839'
+channel_id = '951610440817995839'
 
-members = get_members(guild_id, channel_id) #yes, the channel_id input is required
+def Scan_and_deposit(guild_id, channel_id):
+  members = get_members(guild_id, channel_id) #yes, the channel_id input is required
 
-with open('data.json') as d:
-    userdata = json.load(d)
+  with open('data.json') as d:
+      userdata = json.load(d)
 
-for key in members.keys():
-  userNamecomp1 = members[key]["username"]
-  userNamecomp2 = members[key]["discriminator"]
-  print(key + ": " + userNamecomp1 + "#" + userNamecomp2)
+  for key in members.keys():
+    userNamecomp1 = members[key]["username"]
+    userNamecomp2 = members[key]["discriminator"]
+    print(key + ": " + userNamecomp1 + "#" + userNamecomp2)
 
-  userdata[key] = {}
-  userdata[key]["displayname"] = userNamecomp1 + "#" + userNamecomp2
-  userdata[key]["inserver"][guild_id] = {}
-  userdata[key]["inserver"][guild_id]["servername"] = bot.gateway.session.guild(guild_id).name
-  userdata[key]["inserver"][guild_id]["icon"] = bot.gateway.session.guild(guild_id).icon
-  userdata[key]["inserver"][guild_id]["serverdescription"] = bot.gateway.session.guild(guild_id).description
-  userdata[key]["inserver"][guild_id]["membercount"] = bot.gateway.session.guild(guild_id).memberCount
-  userdata[key]["extrainfo"] = members[key]
+    if key in userdata:
+      #userdata[key] = {}
+      userdata[key]["displayname"] = userNamecomp1 + "#" + userNamecomp2
+      #userdata[key]["inserver"] = {}
+      userdata[key]["inserver"][guild_id] = {}
+      userdata[key]["inserver"][guild_id]["servername"] = bot.gateway.session.guild(guild_id).name
+      userdata[key]["inserver"][guild_id]["icon"] = bot.gateway.session.guild(guild_id).icon
+      userdata[key]["inserver"][guild_id]["serverdescription"] = bot.gateway.session.guild(guild_id).description
+      userdata[key]["inserver"][guild_id]["membercount"] = bot.gateway.session.guild(guild_id).memberCount
+    else:
+      userdata[key] = {}
+      userdata[key]["displayname"] = userNamecomp1 + "#" + userNamecomp2
+      userdata[key]["inserver"] = {}
+      userdata[key]["inserver"][guild_id] = {}
+      userdata[key]["inserver"][guild_id]["servername"] = bot.gateway.session.guild(guild_id).name
+      userdata[key]["inserver"][guild_id]["icon"] = bot.gateway.session.guild(guild_id).icon
+      userdata[key]["inserver"][guild_id]["serverdescription"] = bot.gateway.session.guild(guild_id).description
+      userdata[key]["inserver"][guild_id]["membercount"] = bot.gateway.session.guild(guild_id).memberCount
+    #userdata[key]["extrainfo"] = members[key]
 
-with open('data.json', 'w') as outfile:
-    json.dump(userdata, outfile, indent = 4)
+  with open('data.json', 'w') as outfile:
+      json.dump(userdata, outfile, indent = 4)
+
+
+
+Scan_and_deposit('747124490101588068', '747125833818308789')
+Scan_and_deposit('951610440817995836', '951610440817995839')
