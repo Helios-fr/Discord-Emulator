@@ -1,7 +1,7 @@
 import discum
 import json
 
-f = open('Token.txt', "r")
+f = open('token.txt', "r")
 myToken = f.read()
 
 bot = discum.Client(token=myToken)
