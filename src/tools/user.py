@@ -1,29 +1,16 @@
 class User:
     def __init__(self, token):
         import discum
+        import json
 
 
         self.token = token
         self.client = discum.Client(token=token, log=False)
         
-        # ['id', 'username', 'avatar', 'discriminator', 'public_flags', 'flags', 'locale', 'nsfw_allowed', 'mfa_enabled', 'analytics_token', 'email', 'verified', 'phone']
-        information = self.client.checkToken(self.token)
-
-        self.id = information['id']
-        self.username = information['username']
-        self.avatar = information['avatar']
-        self.discriminator = information['discriminator']
-        self.public_flags = information['public_flags']
-        self.flags = information['flags']
-        self.locale = information['locale']
-        self.nsfw_allowed = information['nsfw_allowed']
-        self.mfa_enabled = information['mfa_enabled']
-        self.analytics_token = information['analytics_token']
-        self.email = information['email']
-        self.verified = information['verified']
-        self.phone = information['phone']
-
-        del information
+        if self.client.checkToken(self.token) != (True, True):
+            print("Invalid Token")
+            exit()
+    
     
     def getRelations(self):
         import discum
@@ -35,6 +22,7 @@ class User:
 
         return relations
     
+
     def getFriends(self):
         relations = self.getRelations()
         '''
@@ -47,6 +35,7 @@ class User:
         
         return friends
     
+
     def getServers(self):
         import discum
         import json
@@ -57,6 +46,7 @@ class User:
 
         return servers
     
+
     def getDMID(self, friendID):
         import discum
         import json
@@ -69,6 +59,41 @@ class User:
         
         return dmID
     
+
+    def getServerChannels(self, serverID):
+        import discum
+        import json
+
+        channels = self.client.getGuildChannels(serverID)
+        channels = channels.text
+        channels = json.loads(channels)
+        
+        channels.insert(0, {'id': '0', 'name': 'Exit'})
+
+        return channels
+    
+
+    def getChannelMessages(self, channelID, amount=15):
+        import discum
+        import json
+
+        messagesRaw = self.client.getMessages(channelID, amount)
+        messagesRaw = messagesRaw.text
+        messagesRaw = json.loads(messagesRaw)
+        messagesRaw.reverse()
+        # reverse the list so the messages are in the correct order
+        messages = []
+        for message in messagesRaw:
+            # format the time to be more readable from 2023-04-17T08:18:22.603000+00:00 to 04/17 08:18
+            time = message['timestamp'][:-16]
+            time = time[5:7] + '/' + time[8:10] + ' ' + time[11:16]
+            
+            # add the message to the list
+            messages.append([message['author']['username'] + '#' + message['author']['discriminator'], time, message['content']])
+        
+        return messages
+
+
     def sendMessage(self, channelID, message):
         import discum
         import json
