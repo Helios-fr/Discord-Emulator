@@ -47,6 +47,16 @@ class User:
         
         return friends
     
+    def getServers(self):
+        import discum
+        import json
+
+        servers = self.client.getGuilds()
+        servers = servers.text
+        servers = json.loads(servers)
+
+        return servers
+    
     def getDMID(self, friendID):
         import discum
         import json
