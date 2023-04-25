@@ -10,6 +10,6 @@ def main():
         colorama.init()
         print(colorama.Fore.BLUE + "Starting Terminal Client..." + colorama.Style.RESET_ALL)
         token = input(colorama.Fore.GREEN + "Token: " + colorama.Style.RESET_ALL)
-        client = Client()
+        client = Client(token=token)
 
 main()
