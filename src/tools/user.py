@@ -3,15 +3,46 @@ class User:
         import discum
         import json
 
-
         self.token = token
         self.client = discum.Client(token=token, log=False)
         
         if self.client.checkToken(self.token) != (True, True):
             print("Invalid Token")
             exit()
+
+        self.activeChannelID = None
     
-    
+    def live(self):
+        import discum
+        import json
+        import colorama
+
+        @self.client.gateway.command
+        def _(resp):
+            if resp.event.message:
+
+                m = resp.parsed.auto()
+                guildID = m['guild_id'] if 'guild_id' in m else None
+
+                channelID = m['channel_id']
+                username = m['author']['username']
+                discrim = m['author']['discriminator']
+                content = m['content']
+
+                time = m['timestamp']
+                time = time[:-16]
+                time = time[5:7] + '/' + time[8:10] + ' ' + time[11:16]
+                
+                if channelID == self.activeChannelID:
+                    # print(colorama.Fore.BLUE + message[1], message[0], ": " + colorama.Style.RESET_ALL + message[2])
+                    colorama.init()
+                    # print(username + ', ' + time + ': ' + content)
+                    print(colorama.Fore.BLUE + time + username + '#' + discrim + ': ' + colorama.Style.RESET_ALL + content)
+
+        self.client.gateway.run(auto_reconnect=True)
+
+
+
     def getRelations(self):
         import discum
         import json

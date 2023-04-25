@@ -1,8 +1,13 @@
 class Client:
     def __init__(self, token):
         from .user import User
+        from threading import Thread
+
         self.token = token
         self.user = User(token)
+
+        self.userThread = Thread(target=self.user.live)
+        self.userThread.start()
 
         self.friends = self.user.getFriends()
 
@@ -34,6 +39,7 @@ class Client:
     def dmsMenu(self):
         from .menu import Menu
         from .user import User
+        import colorama
 
         minimalFriends = []
         for friend in self.friends:
@@ -44,21 +50,55 @@ class Client:
 
         # get the friend ID from the choice
         friendID = self.friends[choice]['id']
-        messages = self.user.getChannelMessages(channelID=self.user.getDMID(friendID=friendID), amount=15)
+        friendDMID = self.user.getDMID(friendID=friendID)
+        messages = self.user.getChannelMessages(channelID=friendDMID, amount=100)
+        colorama.init()
         for message in messages:
-            print(message[1], message[0], ": ", message[2])
+            # print(message[1], message[0], ": ", message[2])
+            print(colorama.Fore.BLUE + message[1], message[0], ": " + colorama.Style.RESET_ALL + message[2])
+        
+        self.user.activeChannelID = friendDMID
+
+        while True:
+            message = input()
+            if "&" in message:
+                break
+            self.user.sendMessage(channelID=friendDMID, message=message)
+        
+        self.mainMenu()
     
     def serverMenu(self, serverID):
         from .menu import Menu
         from .user import User
+        import colorama
 
-        menu = Menu("Server Menu", self.user.getServerChannels(serverID=serverID), 3)
+        minimalChannels = []
+        channels = self.user.getServerChannels(serverID=serverID)
+        for channel in channels:
+            minimalChannels.append(channel['name'])
+        
+        menu = Menu("Server Menu", minimalChannels, 3)
         choice = menu.showMenu()
 
-        if choice == 0:
-            self.openChannel(serverID)
-        else:
-            self.mainMenu()
+        # get the channel ID from the choice
+        channelID = channels[choice]['id']
+        messages = self.user.getChannelMessages(channelID=channelID, amount=100)
+        colorama.init()
+        for message in messages:
+            # print(message[1], message[0], ": ", message[2])
+            print(colorama.Fore.BLUE + message[1], message[0], ": " + colorama.Style.RESET_ALL + message[2])
+        
+        self.user.activeChannelID = channelID
+
+        while True:
+            message = input()
+            if "&" in message:
+                break
+            self.user.sendMessage(channelID=channelID, message=message)
+        
+        self.mainMenu()
+
+
 
 
 
