@@ -1,2 +1,4 @@
-
+.git/
 src/tools/__pycache__/
+venv/
+.config/
