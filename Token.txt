@@ -1,1 +1,0 @@
-Replace all fo the text in this file with your discord token a good way i found to get it is this tapermonkey extension: https://github.com/FOCI-DEV/Get-Discord-Token
