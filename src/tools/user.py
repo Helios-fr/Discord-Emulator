@@ -5,13 +5,13 @@ class User:
 
         self.token = token
         self.client = discum.Client(token=token, log=False)
-        
+
         if self.client.checkToken(self.token) != (True, True):
             print("Invalid Token")
             exit()
 
         self.activeChannelID = None
-    
+
     def live(self):
         import discum
         import json
@@ -32,16 +32,15 @@ class User:
                 time = m['timestamp']
                 time = time[:-16]
                 time = time[5:7] + '/' + time[8:10] + ' ' + time[11:16]
-                
+
                 if channelID == self.activeChannelID:
                     # print(colorama.Fore.BLUE + message[1], message[0], ": " + colorama.Style.RESET_ALL + message[2])
                     colorama.init()
                     # print(username + ', ' + time + ': ' + content)
-                    print(colorama.Fore.BLUE + time + username + '#' + discrim + ': ' + colorama.Style.RESET_ALL + content)
+                    print(colorama.Fore.BLUE + time + username + '#' +
+                          discrim + ': ' + colorama.Style.RESET_ALL + content)
 
         self.client.gateway.run(auto_reconnect=True)
-
-
 
     def getRelations(self):
         import discum
@@ -52,7 +51,6 @@ class User:
         relations = json.loads(relations)
 
         return relations
-    
 
     def getFriends(self):
         relations = self.getRelations()
@@ -63,9 +61,8 @@ class User:
         for relation in relations:
             if relation['type'] == 1:
                 friends.append(relation)
-        
+
         return friends
-    
 
     def getServers(self):
         import discum
@@ -76,7 +73,6 @@ class User:
         servers = json.loads(servers)
 
         return servers
-    
 
     def getDMID(self, friendID):
         import discum
@@ -87,9 +83,8 @@ class User:
         r = json.loads(r)
 
         dmID = r['id']
-        
+
         return dmID
-    
 
     def getServerChannels(self, serverID):
         import discum
@@ -98,11 +93,10 @@ class User:
         channels = self.client.getGuildChannels(serverID)
         channels = channels.text
         channels = json.loads(channels)
-        
+
         channels.insert(0, {'id': '0', 'name': 'Exit'})
 
         return channels
-    
 
     def getChannelMessages(self, channelID, amount=15):
         import discum
@@ -115,15 +109,16 @@ class User:
         # reverse the list so the messages are in the correct order
         messages = []
         for message in messagesRaw:
-            # format the time to be more readable from 2023-04-17T08:18:22.603000+00:00 to 04/17 08:18
+            # format the time to be more readable from
+            # 2023-04-17T08:18:22.603000+00:00 to 04/17 08:18
             time = message['timestamp'][:-16]
             time = time[5:7] + '/' + time[8:10] + ' ' + time[11:16]
-            
-            # add the message to the list
-            messages.append([message['author']['username'] + '#' + message['author']['discriminator'], time, message['content']])
-        
-        return messages
 
+            # add the message to the list
+            messages.append([message['author']['username'] + '#' +
+                            message['author']['discriminator'], time, message['content']])
+
+        return messages
 
     def sendMessage(self, channelID, message):
         import discum
@@ -137,7 +132,3 @@ class User:
             return r
         except Exception as e:
             return e
-
-
-        
-        
